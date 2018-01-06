@@ -20,11 +20,12 @@ class App extends Component {
     fetch(`https://www.instagram.com/explore/tags/${this.tagInput.value}/?__a=1&max_id=${this.state.maxId}`)
       .then((response) => response.json())
       .then((data) => {
+        const topEdges = data.graphql.hashtag.edge_hashtag_to_top_posts.edges.filter((item) => item.node.is_video)
         const edges = data.graphql.hashtag.edge_hashtag_to_media.edges.filter((item) => item.node.is_video)
         this.setState({
           hasNextPage: data.graphql.hashtag.edge_hashtag_to_media.page_info.has_next_page,
           maxId: data.graphql.hashtag.edge_hashtag_to_media.page_info.end_cursor,
-          edges: this.state.edges.concat(edges)
+          edges: this.state.edges.concat(topEdges, edges)
         }, () => {
           if (this.state.edges.length > 0) {
             this.setState({
@@ -55,12 +56,13 @@ class App extends Component {
   }
 
   next() {
-    if (this.state.currentIndex >= this.state.edges.length) {
-      if(!this.state.hasNextPage) {
-        this.setState({ currentIndex: 0 })
-        this.loadVideo()
-      } else {
+    if (this.state.currentIndex >= this.state.edges.length - 1) {
+      if(this.state.hasNextPage) {
         this.request()
+      } else {
+        this.setState({ currentIndex: 0 }, () => {
+          this.loadVideo()
+        })
       }
     } else {
       this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
