@@ -7,6 +7,7 @@ class App extends Component {
     this.state = {
       error: null,
       edges: [],
+      tag: '',
       maxId: '',
       hasNextPage: false,
       currentIndex: 0,
@@ -17,7 +18,7 @@ class App extends Component {
 
   request() {
     this.setState({ loading: true })
-    fetch(`https://www.instagram.com/explore/tags/${this.tagInput.value}/?__a=1&max_id=${this.state.maxId}`)
+    fetch(`https://www.instagram.com/explore/tags/${this.state.tag}/?__a=1&max_id=${this.state.maxId}`)
       .then((response) => response.json())
       .then((data) => {
         const topEdges = data.graphql.hashtag.edge_hashtag_to_top_posts.edges.filter((item) => item.node.is_video)
@@ -28,9 +29,7 @@ class App extends Component {
           edges: this.state.edges.concat(topEdges, edges)
         }, () => {
           if (this.state.edges.length > 0) {
-            this.setState({
-              error: null
-            })
+            if (this.state.error) this.setState({ error: null })
             this.loadVideo()
           } else {
             this.setState({
@@ -58,7 +57,9 @@ class App extends Component {
   next() {
     if (this.state.currentIndex >= this.state.edges.length - 1) {
       if(this.state.hasNextPage) {
-        this.request()
+        this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
+          this.request()
+        })
       } else {
         this.setState({ currentIndex: 0 }, () => {
           this.loadVideo()
@@ -71,11 +72,20 @@ class App extends Component {
     }
   }
 
+  onSubmit(e) {
+    e.preventDefault()
+    this.setState({
+      tag: this.tagInput.value
+    }, () => {
+      this.request()
+    })
+  }
+
   render() {
     return (
       <div className="App">
         { !this.state.videoUrl &&
-          <form onSubmit={(e) => { e.preventDefault(); this.request() }}>
+          <form onSubmit={(e) => this.onSubmit(e)}>
             <input type="text" ref={(input) => { this.tagInput = input }} placeholder="tag"/>
             <button type="submit">Search videos</button>
             { this.state.loading &&
