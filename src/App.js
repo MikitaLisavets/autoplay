@@ -17,7 +17,7 @@ class App extends Component {
   }
 
   request() {
-    this.setState({ loading: true })
+    this.setState({ loading: true, error: null })
     fetch(`https://www.instagram.com/explore/tags/${this.state.tag}/?__a=1&max_id=${this.state.maxId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -29,7 +29,6 @@ class App extends Component {
           edges: this.state.edges.concat(topEdges, edges)
         }, () => {
           if (this.state.edges.length > 0) {
-            if (this.state.error) this.setState({ error: null })
             this.loadVideo()
           } else {
             this.setState({
@@ -37,6 +36,12 @@ class App extends Component {
               error: { description: 'Videos not found' }
             })
           }
+        })
+      })
+      .catch(() => {
+        this.setState({
+          loading: false,
+          error: { description: 'Videos not found' }
         })
       })
   }
@@ -74,8 +79,9 @@ class App extends Component {
 
   onSubmit(e) {
     e.preventDefault()
+    if (!this.tagInput.value) return
     this.setState({
-      tag: this.tagInput.value
+      tag: this.tagInput.value.replace(/\s|[#]/g, '')
     }, () => {
       this.request()
     })
@@ -86,7 +92,7 @@ class App extends Component {
       <div className="App">
         { !this.state.videoUrl &&
           <form onSubmit={(e) => this.onSubmit(e)}>
-            <input type="text" ref={(input) => { this.tagInput = input }} placeholder="tag"/>
+            <input type="text" ref={(input) => { this.tagInput = input }} placeholder="hashtag"/>
             <button type="submit">Search videos</button>
             { this.state.loading &&
             <p>loading...</p>
