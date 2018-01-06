@@ -1,0 +1,20 @@
+.App {
+  text-align: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.App form input {
+  height: 30px;
+  font-size: 18px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.App form button {
+  height: 30px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
