@@ -64,11 +64,13 @@ class App extends Component {
     fetch(`https://www.instagram.com/p/${shortcode}/?__a=1`)
     .then((response) => response.json())
     .then((data) => {
-      window.location.hash = data.graphql.shortcode_media.owner.username
       this.setState({
         currentIndex: currentIndex,
         loading: false,
         videoUrl: data.graphql.shortcode_media.video_url
+      }, () => {
+        window.location.hash = data.graphql.shortcode_media.owner.username
+        window.scrollTo(0, window.innerHeight)
       })
     })
   }
