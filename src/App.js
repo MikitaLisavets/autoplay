@@ -118,7 +118,7 @@ class App extends Component {
           <h2>{this.state.error.description}</h2>
         }
         { this.state.videoUrl &&
-          <video controls="true" height="640" width="640" src={this.state.videoUrl} autoPlay="true" onEnded={() => this.next()}/>
+          <video controls="true" className="video" src={this.state.videoUrl} autoPlay="true" onEnded={() => this.next()}/>
         }
       </div>
     )
