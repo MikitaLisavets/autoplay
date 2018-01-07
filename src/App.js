@@ -21,10 +21,19 @@ class App extends Component {
     fetch(`https://www.instagram.com/explore/tags/${this.state.tag}/?__a=1&max_id=${this.state.maxId}`)
       .then((response) => response.json())
       .then((data) => {
+        const hasNextPage = data.graphql.hashtag.edge_hashtag_to_media.page_info.has_next_page
         const topEdges = data.graphql.hashtag.edge_hashtag_to_top_posts.edges.filter((item) => item.node.is_video)
         const edges = data.graphql.hashtag.edge_hashtag_to_media.edges.filter((item) => item.node.is_video)
+        if (topEdges.length === 0 && edges.length === 0 && hasNextPage) {
+          this.setState({
+            hasNextPage: hasNextPage,
+            maxId: data.graphql.hashtag.edge_hashtag_to_media.page_info.end_cursor,
+          })
+          return this.request()
+        }
+        
         this.setState({
-          hasNextPage: data.graphql.hashtag.edge_hashtag_to_media.page_info.has_next_page,
+          hasNextPage: hasNextPage,
           maxId: data.graphql.hashtag.edge_hashtag_to_media.page_info.end_cursor,
           edges: this.state.edges.concat(topEdges, edges)
         }, () => {
@@ -47,12 +56,17 @@ class App extends Component {
   }
 
   loadVideo() {
-    const shortcode = this.state.edges[this.state.currentIndex].node.shortcode
+    let currentIndex = this.state.currentIndex
+    if (!this.state.edges[this.state.currentIndex]) {
+      currentIndex = 0
+    }
+    const shortcode = this.state.edges[currentIndex].node.shortcode
     fetch(`https://www.instagram.com/p/${shortcode}/?__a=1`)
     .then((response) => response.json())
     .then((data) => {
       window.location.hash = data.graphql.shortcode_media.owner.username
       this.setState({
+        currentIndex: currentIndex,
         loading: false,
         videoUrl: data.graphql.shortcode_media.video_url
       })
