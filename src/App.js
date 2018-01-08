@@ -106,18 +106,19 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        { this.state.loading &&
+          <div className="loader"/>
+        }
+
         { !this.state.videoUrl &&
           <form onSubmit={(e) => this.onSubmit(e)}>
             <input type="text" ref={(input) => { this.tagInput = input }} placeholder="hashtag"/>
             <button type="submit">Search videos</button>
-            { this.state.loading &&
-            <p>loading...</p>
-            }
           </form>
         }
         <br/>
         { this.state.error &&
-          <h2>{this.state.error.description}</h2>
+          <h2 className="error">{this.state.error.description}</h2>
         }
         { this.state.videoUrl &&
           <video controls="true" className="video" src={this.state.videoUrl} autoPlay="true" onEnded={() => this.next()}/>
