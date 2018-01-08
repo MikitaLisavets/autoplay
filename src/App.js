@@ -42,7 +42,7 @@ class App extends Component {
           } else {
             this.setState({
               loading: false,
-              error: { description: 'Videos not found' }
+              error: { description: 'Videos are not found, please try other hashtag' }
             })
           }
         })
@@ -50,7 +50,7 @@ class App extends Component {
       .catch(() => {
         this.setState({
           loading: false,
-          error: { description: 'Videos not found' }
+          error: { description: 'Videos are not found, please try other hashtag' }
         })
       })
   }
@@ -111,15 +111,19 @@ class App extends Component {
         }
 
         { !this.state.videoUrl &&
-          <form onSubmit={(e) => this.onSubmit(e)}>
-            <input type="text" ref={(input) => { this.tagInput = input }} placeholder="hashtag"/>
-            <button type="submit">Search videos</button>
-          </form>
+          <div className="container">
+            <h1>Watch Instagram videos non stop!</h1>
+            <h2>Type a hashtag and enjoy</h2>
+            <form onSubmit={(e) => this.onSubmit(e)}>
+              <input type="text" ref={(input) => { this.tagInput = input }} placeholder="hashtag"/>
+              <button type="submit">Search videos</button>
+            </form>
+            { this.state.error &&
+              <h3 className="error">{this.state.error.description}</h3>
+            }
+          </div>
         }
         <br/>
-        { this.state.error &&
-          <h2 className="error">{this.state.error.description}</h2>
-        }
         { this.state.videoUrl &&
           <video controls="true" className="video" src={this.state.videoUrl} autoPlay="true" onEnded={() => this.next()}/>
         }

@@ -9,6 +9,21 @@
   flex-direction: column;
 }
 
+.App .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 0 10px;
+}
+
+.App .container h1,
+.App .container h2,
+.App .error {
+  color: #fff;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 1);
+}
+
 .App .loader {
   height: 4px;
   width: 100%;
@@ -75,14 +90,16 @@
   float: left;
   width: 35%;
   border: none;
-  background: #ccc;
+  background: #efefef;
   border-radius: 0 6px 6px 0;
   cursor: pointer;
   outline: none;
   transition: background .3s;
+  border-left: 1px solid #ccc;
 }
-.App form button:hover {
-  background: #bbb;
+.App form button:hover,
+.App form button:focus {
+  background: #ddd;
 }
 
 .App .video {
@@ -91,8 +108,4 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-}
-
-.App .error {
-  text-shadow: 1px 1px  #fff;
 }
