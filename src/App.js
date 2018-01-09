@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import shuffle from 'shuffle-array'
 import './App.css'
 
 class App extends Component {
@@ -35,7 +36,7 @@ class App extends Component {
         this.setState({
           hasNextPage: hasNextPage,
           maxId: data.graphql.hashtag.edge_hashtag_to_media.page_info.end_cursor,
-          edges: this.state.edges.concat(topEdges, edges)
+          edges: shuffle(this.state.edges.concat(topEdges, edges))
         }, () => {
           if (this.state.edges.length > 0) {
             this.loadVideo()
